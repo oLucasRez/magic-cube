@@ -4,5 +4,5 @@ import { Colors } from '../enums';
 import { CubieAxes } from '.';
 // ============================================================================
 export type Cubie = {
-  [key in CubieAxes]?: Cubie | Colors;
+  [key in CubieAxes]?: Colors;
 };

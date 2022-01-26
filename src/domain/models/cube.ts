@@ -1,4 +1,7 @@
 // ---------------------------------------------------------------------< types
-import { Cubie } from '.';
+import { Cubie, XCubeAxes, YCubeAxes, ZCubeAxes } from '.';
 // ============================================================================
-export type Cube = Cubie[][][];
+export type Cube = Record<
+  XCubeAxes,
+  Record<YCubeAxes, Record<ZCubeAxes, Cubie>>
+>;

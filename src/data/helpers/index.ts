@@ -1,2 +1,4 @@
+export { rotate } from './rotate-slice';
 export { initCube } from './init-cube';
-export { rotateCubie } from './rotate-cubie';
+export { mapCube } from './map-cube';
+export { opposite } from './opposite';

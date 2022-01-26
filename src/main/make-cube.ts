@@ -1,14 +1,8 @@
-import { initCube, rotateCubie } from '../data/helpers';
-import { CubeHelper } from '../data/helpers/cube-helper';
-
+// -------------------------------------------------------------------< helpers
+import { initCube } from '../data/helpers';
+// ============================================================================
 export function makeCube() {
-  // const cubeHelper = new CubeHelper();
-
   const cube = initCube();
 
-  console.log(cube);
-
-  rotateCubie(cube, 'up', 'acw');
-
-  console.log(cube);
+  return cube;
 }
