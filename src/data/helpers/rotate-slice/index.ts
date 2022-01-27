@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------< helpers
-import { mapCube, opposite } from '..';
+import { mapCube } from '..';
 // ---------------------------------------------------------------------< utils
 import { rotateCubie, translateEdges, translateVertices } from './utils';
 // ---------------------------------------------------------------------< types
@@ -37,13 +37,10 @@ export function rotate(cube: Cube, rotation: Rotation) {
   const orientation = getOrientation(rotation);
   const timesToRotate = getTimesToRotate(rotation);
 
-  console.log(opposite);
-
   for (let i = 0; i < timesToRotate; i++) {
-    mapCube(cube, axis, (cubie) => rotateCubie(cubie, axis, orientation));
-
     translateEdges(cube, axis, orientation);
     translateVertices(cube, axis, orientation);
+    mapCube(cube, axis, (cubie) => rotateCubie(cubie, axis, orientation));
   }
 
   return {

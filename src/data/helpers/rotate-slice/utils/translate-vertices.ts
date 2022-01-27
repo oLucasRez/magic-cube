@@ -28,7 +28,7 @@ export function translateVertices(
   axis: CubieAxes,
   orientation: Orientation
 ) {
-  const cubeCopy = Object.assign({}, cube);
+  const cubeCopy = JSON.parse(JSON.stringify(cube));
 
   const x: XCubieAxes[] = ['left', 'right'];
   const y: YCubieAxes[] = ['up', 'down'];

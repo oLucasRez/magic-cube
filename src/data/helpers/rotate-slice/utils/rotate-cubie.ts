@@ -1,5 +1,3 @@
-// -------------------------------------------------------------------< helpers
-import { opposite } from '../..';
 // ---------------------------------------------------------------------< types
 import {
   Cubie,
@@ -16,45 +14,45 @@ type YFlow = Record<XCubieAxes | ZCubieAxes, Record<Orientation, CubieAxes>>;
 type ZFlow = Record<XCubieAxes | YCubieAxes, Record<Orientation, CubieAxes>>;
 
 const left: XFlow = {
-  up: { cw: 'front', acw: opposite().front },
-  front: { cw: 'down', acw: opposite().down },
-  down: { cw: 'back', acw: opposite().back },
-  back: { cw: 'up', acw: opposite().up },
+  up: { cw: 'front', acw: 'back' },
+  front: { cw: 'down', acw: 'up' },
+  down: { cw: 'back', acw: 'front' },
+  back: { cw: 'up', acw: 'down' },
 };
 
 const right: XFlow = {
-  up: { cw: 'back', acw: opposite().back },
-  back: { cw: 'down', acw: opposite().down },
-  down: { cw: 'front', acw: opposite().front },
-  front: { cw: 'up', acw: opposite().up },
+  up: { cw: 'back', acw: 'front' },
+  back: { cw: 'down', acw: 'up' },
+  down: { cw: 'front', acw: 'back' },
+  front: { cw: 'up', acw: 'down' },
 };
 
 const up: YFlow = {
-  front: { cw: 'left', acw: opposite().left },
-  left: { cw: 'back', acw: opposite().back },
-  back: { cw: 'right', acw: opposite().right },
-  right: { cw: 'front', acw: opposite().front },
+  front: { cw: 'left', acw: 'right' },
+  left: { cw: 'back', acw: 'front' },
+  back: { cw: 'right', acw: 'right' },
+  right: { cw: 'front', acw: 'back' },
 };
 
 const down: YFlow = {
-  front: { cw: 'right', acw: opposite().right },
-  right: { cw: 'back', acw: opposite().back },
-  back: { cw: 'left', acw: opposite().left },
-  left: { cw: 'front', acw: opposite().front },
+  front: { cw: 'right', acw: 'right' },
+  right: { cw: 'back', acw: 'front' },
+  back: { cw: 'left', acw: 'right' },
+  left: { cw: 'front', acw: 'back' },
 };
 
 const front: ZFlow = {
-  up: { cw: 'right', acw: opposite().right },
-  right: { cw: 'down', acw: opposite().down },
-  down: { cw: 'left', acw: opposite().left },
-  left: { cw: 'up', acw: opposite().up },
+  up: { cw: 'right', acw: 'right' },
+  right: { cw: 'down', acw: 'up' },
+  down: { cw: 'left', acw: 'right' },
+  left: { cw: 'up', acw: 'down' },
 };
 
 const back: ZFlow = {
-  up: { cw: 'left', acw: opposite().left },
-  left: { cw: 'down', acw: opposite().down },
-  down: { cw: 'right', acw: opposite().right },
-  right: { cw: 'up', acw: opposite().up },
+  up: { cw: 'left', acw: 'right' },
+  left: { cw: 'down', acw: 'up' },
+  down: { cw: 'right', acw: 'right' },
+  right: { cw: 'up', acw: 'down' },
 };
 
 const flow: Record<CubieAxes, XFlow | YFlow | ZFlow> = {

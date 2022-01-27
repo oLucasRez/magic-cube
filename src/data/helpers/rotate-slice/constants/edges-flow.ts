@@ -1,5 +1,3 @@
-// -------------------------------------------------------------------< helpers
-import { opposite } from '../..';
 // ---------------------------------------------------------------------< types
 import {
   Orientation,
@@ -51,11 +49,11 @@ export const edgesFlow: FlowMold = {
         // left up middle
         left: {
           cw: ['left', 'middle', 'front'],
-          acw: ['left', 'middle', opposite().front],
+          acw: ['left', 'middle', 'back'],
         },
         up: {
           cw: ['middle', 'up', 'back'],
-          acw: ['middle', 'up', opposite().back],
+          acw: ['middle', 'up', 'front'],
         },
       },
     },
@@ -64,22 +62,22 @@ export const edgesFlow: FlowMold = {
         // left middle front
         left: {
           cw: ['left', 'down', 'middle'],
-          acw: ['left', opposite().down, 'middle'],
+          acw: ['left', 'up', 'middle'],
         },
         front: {
           cw: ['middle', 'up', 'front'],
-          acw: ['middle', opposite().up, 'front'],
+          acw: ['middle', 'down', 'front'],
         },
       },
       back: {
         // left middle back
         left: {
           cw: ['left', 'up', 'middle'],
-          acw: ['left', opposite().up, 'middle'],
+          acw: ['left', 'down', 'middle'],
         },
         back: {
           cw: ['middle', 'down', 'back'],
-          acw: ['middle', opposite().down, 'back'],
+          acw: ['middle', 'up', 'back'],
         },
       },
     },
@@ -88,11 +86,11 @@ export const edgesFlow: FlowMold = {
         // left down middle
         left: {
           cw: ['left', 'middle', 'back'],
-          acw: ['left', 'middle', opposite().back],
+          acw: ['left', 'middle', 'front'],
         },
         down: {
           cw: ['middle', 'down', 'front'],
-          acw: ['middle', 'down', opposite().front],
+          acw: ['middle', 'down', 'back'],
         },
       },
     },
@@ -103,22 +101,22 @@ export const edgesFlow: FlowMold = {
         // middle up front
         up: {
           cw: ['left', 'up', 'middle'],
-          acw: [opposite().left, 'up', 'middle'],
+          acw: ['right', 'up', 'middle'],
         },
         front: {
           cw: ['right', 'middle', 'front'],
-          acw: [opposite().right, 'middle', 'front'],
+          acw: ['left', 'middle', 'front'],
         },
       },
       back: {
         // middle up back
         up: {
           cw: ['right', 'up', 'middle'],
-          acw: [opposite().right, 'up', 'middle'],
+          acw: ['left', 'up', 'middle'],
         },
         back: {
           cw: ['left', 'middle', 'back'],
-          acw: [opposite().left, 'middle', 'back'],
+          acw: ['right', 'middle', 'back'],
         },
       },
     },
@@ -127,22 +125,22 @@ export const edgesFlow: FlowMold = {
         // middle down front
         down: {
           cw: ['right', 'down', 'middle'],
-          acw: [opposite().right, 'down', 'middle'],
+          acw: ['left', 'down', 'middle'],
         },
         front: {
           cw: ['left', 'middle', 'front'],
-          acw: [opposite().left, 'middle', 'front'],
+          acw: ['right', 'middle', 'front'],
         },
       },
       back: {
         // middle down back
         down: {
           cw: ['left', 'down', 'middle'],
-          acw: [opposite().left, 'down', 'middle'],
+          acw: ['right', 'down', 'middle'],
         },
         back: {
           cw: ['right', 'middle', 'back'],
-          acw: [opposite().left, 'middle', 'back'],
+          acw: ['right', 'middle', 'back'],
         },
       },
     },
@@ -153,11 +151,11 @@ export const edgesFlow: FlowMold = {
         // right up middle
         right: {
           cw: ['right', 'middle', 'back'],
-          acw: ['right', 'middle', opposite().back],
+          acw: ['right', 'middle', 'front'],
         },
         up: {
           cw: ['middle', 'up', 'front'],
-          acw: ['middle', 'up', opposite().front],
+          acw: ['middle', 'up', 'back'],
         },
       },
     },
@@ -166,22 +164,22 @@ export const edgesFlow: FlowMold = {
         // right middle front
         right: {
           cw: ['right', 'up', 'middle'],
-          acw: ['right', opposite().up, 'middle'],
+          acw: ['right', 'down', 'middle'],
         },
         front: {
           cw: ['middle', 'down', 'front'],
-          acw: ['middle', opposite().down, 'front'],
+          acw: ['middle', 'up', 'front'],
         },
       },
       back: {
         // right middle back
         right: {
           cw: ['right', 'down', 'middle'],
-          acw: ['right', opposite().down, 'middle'],
+          acw: ['right', 'up', 'middle'],
         },
         back: {
           cw: ['middle', 'up', 'back'],
-          acw: ['middle', opposite().up, 'back'],
+          acw: ['middle', 'down', 'back'],
         },
       },
     },
@@ -190,11 +188,11 @@ export const edgesFlow: FlowMold = {
         // right down middle
         right: {
           cw: ['right', 'middle', 'front'],
-          acw: ['right', 'middle', opposite().front],
+          acw: ['right', 'middle', 'back'],
         },
         down: {
           cw: ['middle', 'down', 'back'],
-          acw: ['middle', 'down', opposite().back],
+          acw: ['middle', 'down', 'front'],
         },
       },
     },

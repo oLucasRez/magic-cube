@@ -10,10 +10,11 @@ import {
 // ============================================================================
 export function mapCube<ReturnType>(
   cube: Cube,
-  axis: CubieAxes,
+  axis: CubieAxes | 'all',
   callback: (
     cubie: Cubie,
-    address: [XCubeAxes, YCubeAxes, ZCubeAxes]
+    address: [XCubeAxes, YCubeAxes, ZCubeAxes],
+    index: string
   ) => ReturnType
 ) {
   const x: XCubeAxes[] = ['left', 'middle', 'right'];
@@ -25,8 +26,8 @@ export function mapCube<ReturnType>(
   x.forEach((i) =>
     y.forEach((j) =>
       z.forEach((k) => {
-        (axis === i || axis === j || axis === k) &&
-          _return.push(callback(cube[i][j][k], [i, j, k]));
+        [i, j, k, 'all'].includes(axis) &&
+          _return.push(callback(cube[i][j][k], [i, j, k], i + j + k));
       })
     )
   );

@@ -29,7 +29,7 @@ export function translateEdges(
   axis: CubieAxes,
   orientation: Orientation
 ) {
-  const cubeCopy = Object.assign({}, cube);
+  const cubeCopy = JSON.parse(JSON.stringify(cube));
 
   const x: XCubeAxes[] = ['left', 'middle', 'right'];
   const y: YCubeAxes[] = ['up', 'middle', 'down'];
