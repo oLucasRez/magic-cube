@@ -64,7 +64,7 @@ export const verticesFlow: FlowMold = {
         },
         down: {
           cw: ['right', 'down', 'front'],
-          acw: ['left', 'down', 'front'],
+          acw: ['left', 'down', 'back'],
         },
         front: {
           cw: ['left', 'up', 'front'],

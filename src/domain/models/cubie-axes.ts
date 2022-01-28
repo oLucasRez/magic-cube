@@ -1,4 +1,3 @@
-// ============================================================================
 export type XCubieAxes = 'left' | 'right';
 
 export type YCubieAxes = 'up' | 'down';

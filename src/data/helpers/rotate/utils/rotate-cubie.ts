@@ -1,3 +1,5 @@
+// ---------------------------------------------------------------------< utils
+import { deepCopy } from '../../../utils';
 // ---------------------------------------------------------------------< types
 import {
   Cubie,
@@ -30,19 +32,19 @@ const right: XFlow = {
 const up: YFlow = {
   front: { cw: 'left', acw: 'right' },
   left: { cw: 'back', acw: 'front' },
-  back: { cw: 'right', acw: 'right' },
+  back: { cw: 'right', acw: 'left' },
   right: { cw: 'front', acw: 'back' },
 };
 
 const down: YFlow = {
-  front: { cw: 'right', acw: 'right' },
+  front: { cw: 'right', acw: 'left' },
   right: { cw: 'back', acw: 'front' },
   back: { cw: 'left', acw: 'right' },
   left: { cw: 'front', acw: 'back' },
 };
 
 const front: ZFlow = {
-  up: { cw: 'right', acw: 'right' },
+  up: { cw: 'right', acw: 'left' },
   right: { cw: 'down', acw: 'up' },
   down: { cw: 'left', acw: 'right' },
   left: { cw: 'up', acw: 'down' },
@@ -51,7 +53,7 @@ const front: ZFlow = {
 const back: ZFlow = {
   up: { cw: 'left', acw: 'right' },
   left: { cw: 'down', acw: 'up' },
-  down: { cw: 'right', acw: 'right' },
+  down: { cw: 'right', acw: 'left' },
   right: { cw: 'up', acw: 'down' },
 };
 
@@ -73,7 +75,9 @@ export function rotateCubie(
     ([prevAxis, nextAxis]) => [prevAxis as CubieAxes, nextAxis[orientation]]
   );
 
-  const cubieCopy = Object.assign({}, cubie);
+  const cubieCopy = deepCopy(cubie);
 
   colors.map(([prevAxis, nextAxis]) => (cubie[nextAxis] = cubieCopy[prevAxis]));
+
+  return cubie;
 }

@@ -1,14 +1,31 @@
 // -------------------------------------------------------------------< helpers
 import { mapCube } from '.';
+// ---------------------------------------------------------------------< utils
+import { deepCopy } from '../utils';
 // ---------------------------------------------------------------------< enums
 import { Colors } from '../../domain/enums';
 // ---------------------------------------------------------------------< types
-import { Cube, XCubeAxes, YCubeAxes, ZCubeAxes } from '../../domain/models';
+import {
+  Cube,
+  Cubie,
+  XCubeAxes,
+  YCubeAxes,
+  ZCubeAxes,
+} from '../../domain/models';
 // ============================================================================
 function newCube(): Cube {
   const x: XCubeAxes[] = ['left', 'middle', 'right'];
   const y: YCubeAxes[] = ['up', 'middle', 'down'];
   const z: ZCubeAxes[] = ['front', 'middle', 'back'];
+
+  const emptyCubie: Cubie = {
+    up: null,
+    down: null,
+    front: null,
+    back: null,
+    left: null,
+    right: null,
+  };
 
   const cube: any = {};
 
@@ -17,7 +34,7 @@ function newCube(): Cube {
       z.forEach((k) => {
         if (!cube[i]) cube[i] = {};
         if (!cube[i][j]) cube[i][j] = {};
-        if (!cube[i][j][k]) cube[i][j][k] = {};
+        if (!cube[i][j][k]) cube[i][j][k] = deepCopy(emptyCubie);
       })
     )
   );

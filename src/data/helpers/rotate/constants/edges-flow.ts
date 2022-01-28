@@ -140,7 +140,7 @@ export const edgesFlow: FlowMold = {
         },
         back: {
           cw: ['right', 'middle', 'back'],
-          acw: ['right', 'middle', 'back'],
+          acw: ['left', 'middle', 'back'],
         },
       },
     },

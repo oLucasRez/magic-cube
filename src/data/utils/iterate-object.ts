@@ -1,4 +1,3 @@
-// ============================================================================
 export function iterateObject<
   KeyType extends string | number | symbol,
   ValueType

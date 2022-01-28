@@ -18,15 +18,7 @@ export function Cubie(props: CubieProps) {
 
   const faces = React.useMemo(
     () =>
-      Object.entries({
-        up: null,
-        down: null,
-        left: null,
-        right: null,
-        front: null,
-        back: null,
-        ...cubie,
-      }).map(([axis, color]) => {
+      Object.entries(cubie).map(([axis, color]) => {
         const [outerX, outerY, outerZ] = address;
 
         const x: Record<XCubeAxes, number> = { left: -1, middle: 0, right: 1 };

@@ -1,46 +1,47 @@
+// ---------------------------------------------------------------------< utils
+import { deepCopy } from '../../../utils';
 // -----------------------------------------------------------------< constants
-import { edgesFlow } from '../constants';
+import { verticesFlow } from '../constants';
 // ---------------------------------------------------------------------< types
 import {
-  CubeAxes,
+  Cube,
   CubieAxes,
   Orientation,
-  XCubeAxes,
-  YCubeAxes,
-  ZCubeAxes,
-  Cube,
+  XCubieAxes,
+  YCubieAxes,
+  ZCubieAxes,
 } from '../../../../domain/models';
 // ============================================================================
 type Flow = {
-  [X in CubeAxes]?: {
-    [Y in CubeAxes]?: {
-      [Z in CubeAxes]?: {
+  [X in XCubieAxes]: {
+    [Y in YCubieAxes]: {
+      [Z in ZCubieAxes]: {
         [W in CubieAxes]?: Record<
           Orientation,
-          [XCubeAxes, YCubeAxes, ZCubeAxes]
+          [XCubieAxes, YCubieAxes, ZCubieAxes]
         >;
       };
     };
   };
 };
 
-export function translateEdges(
+export function translateVertices(
   cube: Cube,
   axis: CubieAxes,
   orientation: Orientation
 ) {
-  const cubeCopy = JSON.parse(JSON.stringify(cube));
+  const cubeCopy = deepCopy(cube);
 
-  const x: XCubeAxes[] = ['left', 'middle', 'right'];
-  const y: YCubeAxes[] = ['up', 'middle', 'down'];
-  const z: ZCubeAxes[] = ['front', 'middle', 'back'];
+  const x: XCubieAxes[] = ['left', 'right'];
+  const y: YCubieAxes[] = ['up', 'down'];
+  const z: ZCubieAxes[] = ['front', 'back'];
 
-  const flow: Flow = edgesFlow;
+  const flow: Flow = verticesFlow;
 
   x.forEach((prevX) => {
     y.forEach((prevY) => {
       z.forEach((prevZ) => {
-        const next = flow[prevX]?.[prevY]?.[prevZ]?.[axis]?.[orientation];
+        const next = flow[prevX][prevY][prevZ][axis]?.[orientation];
 
         if (next) {
           const [nextX, nextY, nextZ] = next;

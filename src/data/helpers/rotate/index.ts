@@ -38,9 +38,9 @@ export function rotate(cube: Cube, rotation: Rotation) {
   const timesToRotate = getTimesToRotate(rotation);
 
   for (let i = 0; i < timesToRotate; i++) {
+    mapCube(cube, axis, (cubie) => rotateCubie(cubie, axis, orientation));
     translateEdges(cube, axis, orientation);
     translateVertices(cube, axis, orientation);
-    mapCube(cube, axis, (cubie) => rotateCubie(cubie, axis, orientation));
   }
 
   return {
