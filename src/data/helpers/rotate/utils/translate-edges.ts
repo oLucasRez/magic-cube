@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------< utils
 import { deepCopy } from '../../../utils';
 // -----------------------------------------------------------------< constants
-import { edgesFlow } from '../constants';
+import { edgesFlow } from '../../get-next-position/constants';
 // ---------------------------------------------------------------------< types
 import {
   CubeAxes,

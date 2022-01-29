@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------< utils
 import { deepCopy } from '../../../utils';
 // -----------------------------------------------------------------< constants
-import { verticesFlow } from '../constants';
+import { verticesFlow } from '../../get-next-position/constants';
 // ---------------------------------------------------------------------< types
 import {
   Cube,

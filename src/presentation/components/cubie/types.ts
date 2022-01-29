@@ -1,11 +1,11 @@
 // ---------------------------------------------------------------------< types
-import { Cubie, XCubeAxes, YCubeAxes, ZCubeAxes } from '../../../domain/models';
+import { MeshProps } from '@react-three/fiber';
+import { Cubie } from '../../../domain/models';
 // ============================================================================
-interface CubieBaseProps {}
+interface CubieBaseProps extends MeshProps {}
 
 export interface CubieProps extends CubieBaseProps {
   cubie: Cubie;
-  address: [XCubeAxes, YCubeAxes, ZCubeAxes];
 }
 
 export interface CubieViewProps extends CubieBaseProps {

@@ -2,61 +2,44 @@
 import React from 'react';
 // ----------------------------------------------------------------------< view
 import { CubieView } from './view';
+// ---------------------------------------------------------------------< utils
+import { parsePosition, isX, isY, isZ } from '../../../data/utils';
 // ---------------------------------------------------------------------< types
 import { CubieProps } from './types';
-import {
-  XCubeAxes,
-  XCubieAxes,
-  YCubeAxes,
-  YCubieAxes,
-  ZCubeAxes,
-  ZCubieAxes,
-} from '../../../domain/models';
+import { CubieAxes } from '../../../domain/models';
 // ============================================================================
 export function Cubie(props: CubieProps) {
-  const { cubie, address } = props;
+  const { cubie, ...meshProps } = props;
 
-  const faces = React.useMemo(
-    () =>
-      Object.entries(cubie).map(([axis, color]) => {
-        const [outerX, outerY, outerZ] = address;
+  const getFacePosition = React.useCallback((axis: CubieAxes) => {
+    const facePosition: [number, number, number] = [0, 0, 0];
 
-        const x: Record<XCubeAxes, number> = { left: -1, middle: 0, right: 1 };
-        const y: Record<YCubeAxes, number> = { down: -1, middle: 0, up: 1 };
-        const z: Record<ZCubeAxes, number> = { back: -1, middle: 0, front: 1 };
+    isX(axis) && (facePosition[0] += 0.5 * parsePosition(axis));
+    isY(axis) && (facePosition[1] += 0.5 * parsePosition(axis));
+    isZ(axis) && (facePosition[2] += 0.5 * parsePosition(axis));
 
-        const position: [number, number, number] = [
-          x[outerX],
-          y[outerY],
-          z[outerZ],
-        ];
-        const rotation: [number, number, number] = [0, 0, 0];
+    return facePosition;
+  }, []);
 
-        if (['left', 'right'].includes(axis)) {
-          const angle = axis === 'left' ? -Math.PI / 2 : Math.PI / 2;
+  const getFaceRotation = React.useCallback((axis: CubieAxes) => {
+    const _90deg = Math.PI / 2;
 
-          position[0] += 0.5 * x[axis as XCubieAxes];
-          rotation[1] = angle;
-        }
+    const rotation: [number, number, number] = [0, 0, 0];
 
-        if (['down', 'up'].includes(axis)) {
-          const angle = axis === 'down' ? Math.PI / 2 : -Math.PI / 2;
+    isX(axis) && (rotation[1] += _90deg * parsePosition(axis));
+    isY(axis) && (rotation[0] -= _90deg * parsePosition(axis));
+    isZ(axis) && (rotation[1] += _90deg - _90deg * parsePosition(axis));
 
-          position[1] += 0.5 * y[axis as YCubieAxes];
-          rotation[0] = angle;
-        }
+    return rotation;
+  }, []);
 
-        if (['back', 'front'].includes(axis)) {
-          const angle = axis === 'back' ? Math.PI : 0;
+  const faces = React.useMemo(() => {
+    return Object.entries(cubie).map(([axis, color]) => ({
+      position: getFacePosition(axis as CubieAxes),
+      rotation: getFaceRotation(axis as CubieAxes),
+      color,
+    }));
+  }, [cubie, getFacePosition, getFaceRotation]);
 
-          position[2] += 0.5 * z[axis as ZCubieAxes];
-          rotation[1] = angle;
-        }
-
-        return { position, rotation, color };
-      }),
-    [cubie, address]
-  );
-
-  return CubieView({ faces });
+  return CubieView({ faces, ...meshProps });
 }

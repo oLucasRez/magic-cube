@@ -1,42 +1,58 @@
 // ----------------------------------------------------------------------< deps
 import React from 'react';
-// -----------------------------------------------------------------< factories
-import { makeCube } from '../../../main/factories';
 // -------------------------------------------------------------------< helpers
-import { rotate, getShuffleArray } from '../../../data/helpers';
+import { extractInfoFromRotation, mapCube } from '../../../data/helpers';
 // ----------------------------------------------------------------------< view
 import { CubeView } from './view';
-// ---------------------------------------------------------------------< hooks
-import { useClock } from '../../hooks';
+// ------------------------------------------------------------------< contexts
+import { CubeContext, RotationContext } from '../../contexts';
 // ---------------------------------------------------------------------< utils
-import { deepCopy } from '../../../data/utils';
+import { parsePosition } from '../../../data/utils';
 // ---------------------------------------------------------------------< types
-import { CubeProps } from './types';
-import { Rotation } from '../../../domain/models';
+import { XCubeAxes, YCubeAxes, ZCubeAxes } from '../../../domain/models';
+import { CubieProps } from '../cubie/types';
 // ============================================================================
-export function Cube(props: CubeProps) {
-  const [cube, setCube] = React.useState(makeCube);
+export function Cube() {
+  const { currentCube } = React.useContext(CubeContext);
+  const { currentRotation } = React.useContext(RotationContext);
 
-  const [shuffleArray, setShuffleArray] =
-    React.useState<Rotation[]>(getShuffleArray);
+  const getCubiePosition = React.useCallback(
+    ([i, j, k]: [XCubeAxes, YCubeAxes, ZCubeAxes]) => {
+      const position: [number, number, number] = [
+        parsePosition(i),
+        parsePosition(j),
+        parsePosition(k),
+      ];
 
-  const pauseAt = React.useMemo(() => shuffleArray.length, []);
-
-  useClock(
-    () => {
-      const cubeCopy = deepCopy(cube);
-
-      const mov = shuffleArray.pop();
-
-      if (mov) rotate(cubeCopy, mov);
-
-      setShuffleArray(shuffleArray);
-
-      setCube(cubeCopy);
+      return position;
     },
-    1000,
-    { pauseAt, autoStart: true }
+    []
   );
 
-  return CubeView({ cube });
+  const [staticCubies, dynamicCubies] = React.useMemo<
+    [CubieProps[], CubieProps[]]
+  >(() => {
+    if (!currentCube) return [[], []];
+
+    const { axis } = currentRotation
+      ? extractInfoFromRotation(currentRotation)
+      : { axis: null };
+
+    const statics: CubieProps[] = [];
+    const dynamics: CubieProps[] = [];
+
+    mapCube(currentCube, 'all', (cubie, address) => {
+      const cubieProps = {
+        position: getCubiePosition(address),
+        cubie,
+      };
+
+      if (axis && address.includes(axis)) dynamics.push(cubieProps);
+      else statics.push(cubieProps);
+    }).filter((a) => a);
+
+    return [statics, dynamics];
+  }, [currentCube, getCubiePosition, currentRotation]);
+
+  return CubeView({ staticCubies, dynamicCubies });
 }

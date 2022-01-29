@@ -1,10 +1,11 @@
 // ---------------------------------------------------------------------< types
-import { Cube } from '../../../domain/models';
+import { CubieProps } from '../cubie/types';
 // ============================================================================
 interface CubeBaseProps {}
 
 export interface CubeProps extends CubeBaseProps {}
 
 export interface CubeViewProps extends CubeBaseProps {
-  cube: Cube;
+  staticCubies: CubieProps[];
+  dynamicCubies: CubieProps[];
 }

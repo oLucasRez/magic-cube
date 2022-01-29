@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------< deps
 import React from 'react';
 // ============================================================================
-type Callback = (api: { resume: () => void; pause: () => void }) => void;
+type Callback = () => void;
 
 type Config = {
   autoStart?: boolean;
@@ -29,11 +29,13 @@ export function useClock(callback: Callback, ms: number, config?: Config) {
     if (count === pauseAt) return;
 
     const id = setTimeout(() => {
-      callback({ resume, pause });
+      callback();
 
       setCount(count + 1);
     }, ms);
 
     return () => clearTimeout(id);
   }, [isRunning, count, pauseAt, callback, ms]);
+
+  return { resume, pause };
 }

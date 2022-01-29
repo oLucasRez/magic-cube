@@ -1,24 +1,21 @@
+// ----------------------------------------------------------------------< deps
+import React from 'react';
 // ---------------------------------------------------------------------< types
 import { CubieViewProps } from './types';
 // ============================================================================
 export function CubieView(props: CubieViewProps) {
-  const { faces } = props;
+  const { faces, ...meshProps } = props;
 
-  function renderFaces() {
+  const renderFaces = React.useCallback(() => {
     return faces.map(({ position, rotation, color }, i) => {
       return (
-        <mesh
-          key={i}
-          position={position}
-          rotation={rotation}
-          scale={color ? 0.98 : 1}
-        >
+        <mesh key={i} position={position} rotation={rotation}>
           <planeBufferGeometry attach='geometry' />
           <meshLambertMaterial attach='material' color={color ?? 'black'} />
         </mesh>
       );
     });
-  }
+  }, [faces]);
 
-  return <>{renderFaces()}</>;
+  return <mesh {...meshProps}>{renderFaces()}</mesh>;
 }

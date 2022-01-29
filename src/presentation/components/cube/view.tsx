@@ -1,16 +1,31 @@
-// ---------------------------------------------------------------------< types
-import { mapCube } from '../../../data/helpers';
+// ----------------------------------------------------------------< components
 import { Cubie } from '../cubie';
+// ---------------------------------------------------------------------< types
 import { CubeViewProps } from './types';
 // ============================================================================
 export function CubeView(props: CubeViewProps) {
-  const { cube } = props;
+  const { staticCubies, dynamicCubies } = props;
 
-  function renderCubies() {
-    return mapCube(cube, 'all', (cubie, address, i) => (
-      <Cubie key={i} cubie={cubie} address={address} />
+  function renderStaticCubies() {
+    return staticCubies.map((cubieProps, key) => (
+      <Cubie key={key} {...cubieProps} />
     ));
   }
 
-  return <>{renderCubies()}</>;
+  function renderDynamicCubies() {
+    return (
+      <group>
+        {dynamicCubies.map((cubieProps, key) => (
+          <Cubie key={key} {...cubieProps} />
+        ))}
+      </group>
+    );
+  }
+
+  return (
+    <>
+      {renderStaticCubies()}
+      {renderDynamicCubies()}
+    </>
+  );
 }

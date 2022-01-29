@@ -11,7 +11,7 @@ function getAxis(rotation: Rotation | undefined) {
   return axis;
 }
 
-export function getShuffleArray() {
+export function getShuffleSequence(length: number) {
   const movs: Rotation[] = [
     ...(['U', 'U`', 'U2'] as Rotation[]),
     ...(['F', 'F`', 'F2'] as Rotation[]),
@@ -23,7 +23,7 @@ export function getShuffleArray() {
 
   const shuffleArray: Rotation[] = [];
 
-  while (shuffleArray.length < 21) {
+  while (shuffleArray.length < length) {
     const i = Math.floor(Math.random() * movs.length);
 
     const mov = movs[i];
