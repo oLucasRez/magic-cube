@@ -1,21 +1,20 @@
 // ----------------------------------------------------------------------< deps
 import React from 'react';
 // ---------------------------------------------------------------------< types
-import { Rotation } from '../../../domain/models';
+import { Movement } from '../../../domain/models';
 // ============================================================================
-interface RotationContextBase {
+interface MovementsContextBase {
   clock_ms: number;
-  autoStart?: boolean;
 }
 
-export interface RotationContextValue extends RotationContextBase {
-  currentRotation?: Rotation;
-  nextRotation?: Rotation;
-  resume(): void;
+export interface MovementsContextValue extends MovementsContextBase {
+  current: Movement | null;
+  next: Movement | null;
 }
 
-export interface RotationContextProviderProps extends RotationContextBase {
+export interface MovementsContextProviderProps extends MovementsContextBase {
   shuffleLength: number;
+  autoStart?: boolean;
 
   children?: React.ReactNode;
 }

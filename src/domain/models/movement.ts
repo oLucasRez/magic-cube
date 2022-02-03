@@ -1,4 +1,4 @@
-export type Rotation =
+export type Movement =
   | 'U'
   | 'U`'
   | 'U2'

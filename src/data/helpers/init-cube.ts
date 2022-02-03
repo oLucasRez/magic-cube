@@ -2,8 +2,6 @@
 import { mapCube } from '.';
 // ---------------------------------------------------------------------< utils
 import { deepCopy } from '../utils';
-// ---------------------------------------------------------------------< enums
-import { Colors } from '../../domain/enums';
 // ---------------------------------------------------------------------< types
 import {
   Cube,
@@ -43,12 +41,12 @@ function newCube(): Cube {
 }
 
 function colorfyCube(cube: Cube) {
-  mapCube(cube, 'up', (cubie) => (cubie.up = Colors.WHITE));
-  mapCube(cube, 'down', (cubie) => (cubie.down = Colors.YELLOW));
-  mapCube(cube, 'right', (cubie) => (cubie.right = Colors.RED));
-  mapCube(cube, 'left', (cubie) => (cubie.left = Colors.ORANGE));
-  mapCube(cube, 'front', (cubie) => (cubie.front = Colors.GREEN));
-  mapCube(cube, 'back', (cubie) => (cubie.back = Colors.BLUE));
+  mapCube(cube, 'up', (cubie) => (cubie.up = 'white'));
+  mapCube(cube, 'down', (cubie) => (cubie.down = 'yellow'));
+  mapCube(cube, 'right', (cubie) => (cubie.right = 'red'));
+  mapCube(cube, 'left', (cubie) => (cubie.left = 'orange'));
+  mapCube(cube, 'front', (cubie) => (cubie.front = 'green'));
+  mapCube(cube, 'back', (cubie) => (cubie.back = 'blue'));
 }
 
 export function initCube() {

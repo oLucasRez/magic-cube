@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------< types
 import { MeshProps } from '@react-three/fiber';
-import { Cubie } from '../../../domain/models';
+import { Colors, Cubie } from '../../../domain/models';
 // ============================================================================
 interface CubieBaseProps extends MeshProps {}
 
@@ -12,6 +12,6 @@ export interface CubieViewProps extends CubieBaseProps {
   faces: {
     position: [number, number, number];
     rotation: [number, number, number];
-    color: string | null;
+    color: Colors | null;
   }[];
 }

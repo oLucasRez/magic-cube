@@ -1,6 +1,10 @@
 export { getNextPosition } from './get-next-position';
 export { rotate } from './rotate';
-export { extractInfoFromRotation } from './extract-info-from-rotation';
+export { composeMovement } from './compose-movement';
+export { extractInfoFromMovement } from './extract-info-from-movement';
 export { getShuffleSequence } from './get-shuffle-sequence';
+export { hasColor } from './has-color';
 export { initCube } from './init-cube';
+export { cubieIs } from './cubie-is';
 export { mapCube } from './map-cube';
+export { translateByAxis, translateByColor } from './translate';

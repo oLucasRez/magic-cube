@@ -15,13 +15,9 @@ export function useClock(callback: Callback, ms: number, config?: Config) {
 
   const [isRunning, setIsRunning] = React.useState(autoStart);
 
-  function resume() {
-    setIsRunning(true);
-  }
+  const resume = React.useCallback(() => setIsRunning(true), []);
 
-  function pause() {
-    setIsRunning(false);
-  }
+  const pause = React.useCallback(() => setIsRunning(false), []);
 
   React.useEffect(() => {
     if (!isRunning) return;

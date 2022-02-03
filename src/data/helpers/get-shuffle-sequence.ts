@@ -1,10 +1,10 @@
 // ---------------------------------------------------------------------< types
-import { Rotation } from '../../domain/models';
+import { Movement } from '../../domain/models';
 // ============================================================================
-function getAxis(rotation: Rotation | undefined) {
-  if (!rotation) return;
+function getAxis(movement: Movement | undefined) {
+  if (!movement) return;
 
-  const axis: string = rotation
+  const axis: string = movement
     .split('')
     .filter((char) => char !== '`' && char !== '2')[0];
 
@@ -12,16 +12,16 @@ function getAxis(rotation: Rotation | undefined) {
 }
 
 export function getShuffleSequence(length: number) {
-  const movs: Rotation[] = [
-    ...(['U', 'U`', 'U2'] as Rotation[]),
-    ...(['F', 'F`', 'F2'] as Rotation[]),
-    ...(['R', 'R`', 'R2'] as Rotation[]),
-    ...(['B', 'B`', 'B2'] as Rotation[]),
-    ...(['L', 'L`', 'L2'] as Rotation[]),
-    ...(['D', 'D`', 'D2'] as Rotation[]),
+  const movs: Movement[] = [
+    ...(['U', 'U`', 'U2'] as Movement[]),
+    ...(['F', 'F`', 'F2'] as Movement[]),
+    ...(['R', 'R`', 'R2'] as Movement[]),
+    ...(['B', 'B`', 'B2'] as Movement[]),
+    ...(['L', 'L`', 'L2'] as Movement[]),
+    ...(['D', 'D`', 'D2'] as Movement[]),
   ];
 
-  const shuffleArray: Rotation[] = [];
+  const shuffleArray: Movement[] = [];
 
   while (shuffleArray.length < length) {
     const i = Math.floor(Math.random() * movs.length);

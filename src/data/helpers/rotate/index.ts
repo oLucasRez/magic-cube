@@ -1,11 +1,11 @@
 // -------------------------------------------------------------------< helpers
-import { mapCube } from '..';
+import { composeMovement, mapCube } from '..';
 // ---------------------------------------------------------------------< utils
 import { rotateCubie, translateEdges, translateVertices } from './utils';
 // ---------------------------------------------------------------------< types
-import { Cube, CubieAxes, Orientation, Rotation } from '../../../domain/models';
+import { Cube, CubieAxes, Orientation, Movement } from '../../../domain/models';
 // ============================================================================
-function getAxis(rotation: Rotation) {
+function getAxis(movement: Movement) {
   const map: Record<string, CubieAxes> = {
     L: 'left',
     R: 'right',
@@ -15,35 +15,37 @@ function getAxis(rotation: Rotation) {
     B: 'back',
   };
   const axis: CubieAxes =
-    map[rotation.split('').filter((char) => char !== '`' && char !== '2')[0]];
+    map[movement.split('').filter((char) => char !== '`' && char !== '2')[0]];
 
   return axis;
 }
 
-function getOrientation(rotation: Rotation) {
-  const orientation: Orientation = rotation.includes('`') ? 'acw' : 'cw';
+function getOrientation(movement: Movement) {
+  const orientation: Orientation = movement.includes('`') ? 'acw' : 'cw';
 
   return orientation;
 }
 
-function getTimesToRotate(rotation: Rotation) {
-  const timesToRotate = rotation.includes('2') ? 2 : 1;
+function getTimes(movement: Movement) {
+  const timesToRotate = movement.includes('2') ? 2 : 1;
 
   return timesToRotate;
 }
 
-export function rotate(cube: Cube, rotation: Rotation) {
-  const axis = getAxis(rotation);
-  const orientation = getOrientation(rotation);
-  const timesToRotate = getTimesToRotate(rotation);
+export function rotate(
+  cube: Cube,
+  movement: Movement,
+  translation?: Record<CubieAxes, CubieAxes>
+) {
+  const axis = translation ? translation[getAxis(movement)] : getAxis(movement);
+  const orientation = getOrientation(movement);
+  const times = getTimes(movement);
 
-  for (let i = 0; i < timesToRotate; i++) {
+  for (let i = 0; i < times; i++) {
     mapCube(cube, axis, (cubie) => rotateCubie(cubie, axis, orientation));
     translateEdges(cube, axis, orientation);
     translateVertices(cube, axis, orientation);
   }
 
-  return {
-    then: (_rotation: Rotation) => rotate(cube, _rotation),
-  };
+  return composeMovement(axis, times === 2 ? 2 : orientation);
 }

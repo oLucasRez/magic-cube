@@ -1,11 +1,16 @@
 export function iterateObject<
   KeyType extends string | number | symbol,
-  ValueType
+  ValueType,
+  ReturnType
 >(
   object: Record<KeyType, ValueType>,
-  callback: (payload: [KeyType, ValueType]) => void
+  callback: (payload: [KeyType, ValueType]) => ReturnType
 ) {
+  const _return: ReturnType[] = [];
+
   Object.entries<ValueType>(object).map(([key, value]) =>
-    callback([key as KeyType, value])
+    _return.push(callback([key as KeyType, value]))
   );
+
+  return _return;
 }

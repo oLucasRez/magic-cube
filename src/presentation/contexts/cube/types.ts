@@ -1,13 +1,13 @@
 // ----------------------------------------------------------------------< deps
 import React from 'react';
 // ---------------------------------------------------------------------< types
-import { Cube } from '../../../domain/models';
+import { Cube, Movement } from '../../../domain/models';
 // ============================================================================
 interface CubeContextBase {}
 
 export interface CubeContextValue extends CubeContextBase {
-  nextCube?: Cube;
-  currentCube?: Cube;
+  current: Cube;
+  rotate(movement: Movement | null): void;
 }
 
 export interface CubeContextProviderProps extends CubeContextBase {

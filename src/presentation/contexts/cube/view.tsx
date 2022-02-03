@@ -3,51 +3,37 @@ import React from 'react';
 // -----------------------------------------------------------------< factories
 import { makeCube } from '../../../main/factories';
 // -------------------------------------------------------------------< helpers
-import { RotationContext } from '..';
-// ------------------------------------------------------------------< contexts
-import { rotate } from '../../../data/helpers';
+import { rotate as rotateCube } from '../../../data/helpers';
 // ---------------------------------------------------------------------< utils
 import { deepCopy } from '../../../data/utils';
 // ---------------------------------------------------------------------< types
 import { CubeContextValue, CubeContextProviderProps } from './types';
-import { Cube } from '../../../domain/models';
+import { Cube, Movement } from '../../../domain/models';
 // ============================================================================
-const defaultValue: CubeContextValue = {};
+const defaultValue: CubeContextValue = {
+  current: makeCube(),
+  rotate: () => {},
+};
 
 export const CubeContext = React.createContext<CubeContextValue>(defaultValue);
 
 export function CubeContextProvider(props: CubeContextProviderProps) {
   const { children } = props;
 
-  const [nextCube, setNextCube] = React.useState<Cube>(makeCube);
-  const [currentCube, setCurrentCube] = React.useState<Cube>(makeCube);
+  const [current, setCurrent] = React.useState<Cube>(makeCube);
 
-  const { currentRotation, nextRotation } = React.useContext(RotationContext);
+  const rotate = React.useCallback((movement: Movement | null) => {
+    setCurrent((previous) => {
+      const cube = deepCopy(previous);
 
-  React.useEffect(() => {
-    currentRotation &&
-      setCurrentCube((previous) => {
-        const cubeCopy = deepCopy(previous);
+      if (movement) rotateCube(cube, movement);
 
-        rotate(cubeCopy, currentRotation);
-
-        return cubeCopy;
-      });
-  }, [currentRotation]);
-
-  React.useEffect(() => {
-    nextRotation &&
-      setNextCube((current) => {
-        const cubeCopy = deepCopy(current);
-
-        rotate(cubeCopy, nextRotation);
-
-        return cubeCopy;
-      });
-  }, [nextRotation]);
+      return cube;
+    });
+  }, []);
 
   return (
-    <CubeContext.Provider value={{ currentCube, nextCube }}>
+    <CubeContext.Provider value={{ current, rotate }}>
       {children}
     </CubeContext.Provider>
   );

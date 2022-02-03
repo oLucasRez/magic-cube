@@ -1,2 +1,2 @@
 export * from './cube';
-export * from './rotation';
+export * from './movements';

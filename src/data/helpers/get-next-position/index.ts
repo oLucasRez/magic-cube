@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------< helpers
-import { extractInfoFromRotation } from '..';
+import { extractInfoFromMovement } from '..';
 // -----------------------------------------------------------------< constants
 import { edgesFlow, verticesFlow } from './constants';
 // ---------------------------------------------------------------------< types
@@ -8,7 +8,7 @@ import {
   Cubie,
   CubieAxes,
   Orientation,
-  Rotation,
+  Movement,
   XCubeAxes,
   YCubeAxes,
   ZCubeAxes,
@@ -38,9 +38,9 @@ function isEdge(cubie: Cubie) {
 export function getNextPosition(
   cubie: Cubie,
   address: [XCubeAxes, YCubeAxes, ZCubeAxes],
-  rotation: Rotation
+  movement: Movement
 ) {
-  const { axis, orientation, times } = extractInfoFromRotation(rotation);
+  const { axis, orientation, times } = extractInfoFromMovement(movement);
 
   const flow: Flow = isEdge(cubie)
     ? edgesFlow
