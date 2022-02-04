@@ -34,12 +34,28 @@ function getTimes(movement: Movement) {
 
 export function rotate(
   cube: Cube,
-  movement: Movement,
+  movement: Movement | { axis: CubieAxes; orientation: Orientation | 2 },
   translation?: Record<CubieAxes, CubieAxes>
 ) {
-  const axis = translation ? translation[getAxis(movement)] : getAxis(movement);
-  const orientation = getOrientation(movement);
-  const times = getTimes(movement);
+  if (typeof movement === 'string') {
+    const axis = translation
+      ? translation[getAxis(movement)]
+      : getAxis(movement);
+    const orientation = getOrientation(movement);
+    const times = getTimes(movement);
+
+    for (let i = 0; i < times; i++) {
+      mapCube(cube, axis, (cubie) => rotateCubie(cubie, axis, orientation));
+      translateEdges(cube, axis, orientation);
+      translateVertices(cube, axis, orientation);
+    }
+
+    return composeMovement(axis, times === 2 ? 2 : orientation);
+  }
+
+  const axis = translation ? translation[movement.axis] : movement.axis;
+  const orientation = movement.orientation === 2 ? 'cw' : movement.orientation;
+  const times = movement.orientation === 2 ? 2 : 1;
 
   for (let i = 0; i < times; i++) {
     mapCube(cube, axis, (cubie) => rotateCubie(cubie, axis, orientation));

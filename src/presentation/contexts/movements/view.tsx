@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------< deps
 import React from 'react';
 // -------------------------------------------------------------------< helpers
-import { getShuffleSequence } from '../../../data/helpers';
+import { getResolveSequence, getShuffleSequence } from '../../../data/helpers';
 // ------------------------------------------------------------------< contexts
 import { CubeContext } from '..';
 // ---------------------------------------------------------------------< hooks
@@ -9,7 +9,6 @@ import { useClock } from '../../hooks';
 // ---------------------------------------------------------------------< types
 import { MovementsContextValue, MovementsContextProviderProps } from './types';
 import { Movement } from '../../../domain/models';
-import { getWhiteCrossSequence } from '../../../data/helpers/get-white-cross-sequence';
 // ============================================================================
 const defaultValue: MovementsContextValue = {
   current: null,
@@ -25,7 +24,9 @@ export function MovementsContextProvider(props: MovementsContextProviderProps) {
 
   const cube = React.useContext(CubeContext);
 
-  const [shuffleSequence, setShuffleSequence] = React.useState<Movement[]>(() =>
+  const [step, setStep] = React.useState<'shuffle' | 'resolve'>('shuffle');
+
+  const [sequence, setSequence] = React.useState(
     getShuffleSequence(shuffleLength)
   );
 
@@ -34,10 +35,17 @@ export function MovementsContextProvider(props: MovementsContextProviderProps) {
 
   const { pause } = useClock(
     () => {
-      if (!next) {
-        getWhiteCrossSequence(cube.current);
+      if (!next && !current) {
+        if (step === 'shuffle') {
+          const resolveSequence = getResolveSequence(cube.current);
 
-        return pause();
+          setNext(resolveSequence.shift() || null);
+          setSequence(resolveSequence);
+          setStep('resolve');
+
+          return;
+        }
+        if (step === 'resolve') return pause();
       }
 
       console.log(current);
@@ -51,12 +59,12 @@ export function MovementsContextProvider(props: MovementsContextProviderProps) {
   );
 
   function getNext() {
-    const newShuffleSequence = [...shuffleSequence];
-    const nextMovement = newShuffleSequence.pop() || null;
+    const newSequence = [...sequence];
+    const newMovement = newSequence.shift() || null;
 
-    setShuffleSequence(newShuffleSequence);
+    setSequence(newSequence);
 
-    return nextMovement;
+    return newMovement;
   }
 
   return (

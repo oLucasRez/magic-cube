@@ -1,4 +1,5 @@
 export { getNextPosition } from './get-next-position';
+export { getResolveSequence } from './get-resolve-sequence';
 export { rotate } from './rotate';
 export { composeMovement } from './compose-movement';
 export { extractInfoFromMovement } from './extract-info-from-movement';
