@@ -182,7 +182,7 @@ function flipAllEdgeCubiesToUp(cube: Cube, movements: Movement[]) {
   });
 }
 
-export function resolveWhiteCross(cube: Cube, movements: Movement[]) {
+export function resolveWhiteEdges(cube: Cube, movements: Movement[]) {
   let count = 0;
 
   while (true) {

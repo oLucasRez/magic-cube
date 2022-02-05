@@ -10,7 +10,7 @@ export function EnvironmentView(props: EnvironmentViewProps) {
   const { children } = props;
 
   return (
-    <Canvas onClick={() => console.log('sdasd')}>
+    <Canvas>
       <OrbitControls
         makeDefault
         addEventListener={undefined}
@@ -22,7 +22,7 @@ export function EnvironmentView(props: EnvironmentViewProps) {
       <ambientLight intensity={1} />
 
       <CubeContextProvider>
-        <MovementsContextProvider shuffleLength={10} clock_ms={50} autoStart>
+        <MovementsContextProvider shuffleLength={21} clock_ms={50} autoStart>
           {children}
         </MovementsContextProvider>
       </CubeContextProvider>
