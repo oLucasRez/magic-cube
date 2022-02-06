@@ -1,22 +1,10 @@
-/* eslint-disable no-loop-func */
 // -------------------------------------------------------------------< helpers
 import { cubieIs, hasColor, mapCube, rotate, translateByAxis } from '..';
+// ---------------------------------------------------------------------< utils
+import { cubieEntries, getCubie, getFace } from './utils';
 // ---------------------------------------------------------------------< types
 import { Cube, Cubie, Movement } from '../../../domain/models';
-import { cubieEntries, getCubie, getFace } from './utils';
 // ============================================================================
-function logCubie(cubie: Cubie) {
-  const colors = cubieEntries(cubie, ([, color]) => color).map(
-    ([, color]) => color
-  );
-
-  let _type = '';
-  if (cubieIs('face', cubie)) _type = '[face]';
-  if (cubieIs('edge', cubie)) _type = '[edge]';
-  if (cubieIs('vertex', cubie)) _type = '[vertex]';
-
-  return `(${_type} ${colors.join(' ')})`;
-}
 
 function loop(
   callback: (options: { _break: number; _continue: number }) => any,
@@ -268,12 +256,10 @@ function resolveUpSlideFrontWhiteFace(cube: Cube, movements: Movement[]) {
     const hasntWhiteInUp = cubie.up !== 'white';
 
     if (isVertex && hasWhite && hasntWhiteInUp) {
-      const front = cubieEntries(
+      const [front] = cubieEntries(
         cubie,
         ([axis, color]) => axis !== 'up' && color && color !== 'white'
-      )[0][0];
-
-      console.log(front);
+      )[0];
 
       const { real } = translateByAxis({ up: 'up', front });
       if (!real) return console.error('tradução impossível.');
