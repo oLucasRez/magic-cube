@@ -5,28 +5,6 @@ import { cubieEntries, getCubie, getFace } from './utils';
 // ---------------------------------------------------------------------< types
 import { Cube, Cubie, Movement } from '../../../domain/models';
 // ============================================================================
-
-function loop(
-  callback: (options: { _break: number; _continue: number }) => any,
-  loopout: number = 15
-) {
-  const options = {
-    _break: 65216,
-    _continue: 77961,
-  };
-
-  while (true) {
-    const cmd = callback(options);
-
-    if (cmd === options._break) break;
-    if (cmd === options._continue) continue;
-
-    if (!loopout) return console.error('loop infinito.');
-
-    loopout--;
-  }
-}
-
 function resolveDownSliceFrontWhiteFace(cube: Cube, movements: Movement[]) {
   let didNothing = true;
 
@@ -75,9 +53,9 @@ function resolveDownSliceFrontWhiteFace(cube: Cube, movements: Movement[]) {
       otherColors.includes(mmfColor) && otherColors.includes(lmmColor);
 
     if (correctPlace) {
-      movements.push(rotate(cube, { axis: real.front, orientation: 'cw' }));
-      movements.push(rotate(cube, { axis: real.up, orientation: 'cw' }));
-      movements.push(rotate(cube, { axis: real.front, orientation: 'acw' }));
+      movements.push(rotate(cube, 'F', real));
+      movements.push(rotate(cube, 'U', real));
+      movements.push(rotate(cube, 'F`', real));
 
       didNothing = false;
     }
@@ -108,9 +86,9 @@ function resolveDownSliceFrontWhiteFace(cube: Cube, movements: Movement[]) {
       otherColors.includes(mmfColor) && otherColors.includes(rmmColor);
 
     if (correctPlace) {
-      movements.push(rotate(cube, { axis: real.front, orientation: 'acw' }));
-      movements.push(rotate(cube, { axis: real.up, orientation: 'acw' }));
-      movements.push(rotate(cube, { axis: real.front, orientation: 'cw' }));
+      movements.push(rotate(cube, 'F`', real));
+      movements.push(rotate(cube, 'U`', real));
+      movements.push(rotate(cube, 'F', real));
 
       didNothing = false;
     }

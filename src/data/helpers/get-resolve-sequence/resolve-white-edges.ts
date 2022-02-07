@@ -59,13 +59,9 @@ function resolveUpSliceFrontWhiteFace(cube: Cube, movements: Movement[]) {
         const rdmHasntWhite = rdm && rdm.down !== 'white';
 
         if (rdmHasntWhite) {
-          movements.push(rotate(cube, { axis: real.front, orientation: 'cw' }));
-          movements.push(
-            rotate(cube, { axis: real.right, orientation: 'acw' })
-          );
-          movements.push(
-            rotate(cube, { axis: real.front, orientation: 'acw' })
-          );
+          movements.push(rotate(cube, 'F', real));
+          movements.push(rotate(cube, 'R`', real));
+          movements.push(rotate(cube, 'F`', real));
 
           resolved = false;
           break;
@@ -75,11 +71,9 @@ function resolveUpSliceFrontWhiteFace(cube: Cube, movements: Movement[]) {
         const ldmHasntWhite = ldm && ldm.down !== 'white';
 
         if (ldmHasntWhite) {
-          movements.push(
-            rotate(cube, { axis: real.front, orientation: 'acw' })
-          );
-          movements.push(rotate(cube, { axis: real.left, orientation: 'cw' }));
-          movements.push(rotate(cube, { axis: real.front, orientation: 'cw' }));
+          movements.push(rotate(cube, 'F`', real));
+          movements.push(rotate(cube, 'L', real));
+          movements.push(rotate(cube, 'F', real));
 
           resolved = false;
           break;
@@ -142,9 +136,9 @@ function resolveDownSlice(cube: Cube, movements: Movement[]) {
       const { real } = translateByAxis({ up: 'up', front });
       if (!real) return console.error('tradução impossível.');
 
-      movements.push(rotate(cube, { axis: real.front, orientation: 'acw' }));
-      movements.push(rotate(cube, 'D'));
-      movements.push(rotate(cube, { axis: real.right, orientation: 'acw' }));
+      movements.push(rotate(cube, 'F`', real));
+      movements.push(rotate(cube, 'D', real));
+      movements.push(rotate(cube, 'R`', real));
 
       resolved = false;
     }
