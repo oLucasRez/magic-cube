@@ -27,7 +27,30 @@ export function MovementsContextProvider(props: MovementsContextProviderProps) {
   const [step, setStep] = React.useState<'shuffle' | 'resolve'>('shuffle');
 
   const [sequence, setSequence] = React.useState<Movement[]>(
-    getShuffleSequence(shuffleLength)
+    // getShuffleSequence(shuffleLength)
+    [
+      'F`',
+      'D',
+      'L2',
+      'B',
+      'F2',
+      'B2',
+      'R',
+      'U2',
+      'F`',
+      'R2',
+      'L2',
+      'F`',
+      'B2',
+      'F',
+      'L`',
+      'D2',
+      'L2',
+      'U`',
+      'R2',
+      'U2',
+      'B`',
+    ]
   );
 
   const [current, setCurrent] = React.useState<null | Movement>(null);

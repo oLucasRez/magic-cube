@@ -3,6 +3,7 @@ import { resolveWhiteEdges } from './resolve-white-edges';
 import { resolveWhiteVertices } from './resolve-white-vertices';
 import { resolveMiddleEdges } from './resolve-middle-edges';
 import { resolveYellowFace } from './resolve-yellow-face';
+import { resolveYellowBorders } from './resolve-yellow-borders';
 import { compressSequence } from './compress-sequence';
 // ---------------------------------------------------------------------< utils
 import { deepCopy } from '../../utils';
@@ -15,8 +16,9 @@ export function getResolveSequence(cube: Cube) {
   const movements = [
     resolveWhiteEdges,
     resolveWhiteVertices,
-    resolveMiddleEdges,
-    resolveYellowFace,
+    // resolveMiddleEdges,
+    // resolveYellowFace,
+    // resolveYellowBorders,
   ].reduce(
     (prevMovements, resolve) => resolve(cubeCopy, prevMovements),
     [] as Movement[]
