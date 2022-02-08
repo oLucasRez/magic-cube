@@ -241,8 +241,8 @@ export function translateByColor(reference: Reference<Colors>) {
 }
 
 export function translateByAxis(reference: Reference<CubieAxes>): {
-  real?: Record<CubieAxes, CubieAxes>;
-  virtual?: Record<CubieAxes, CubieAxes>;
+  real: Record<CubieAxes, CubieAxes>;
+  virtual: Record<CubieAxes, CubieAxes>;
 } {
   const ref: Record<CubieAxes, CubieAxes | null> = { ...empty, ...reference };
 
@@ -259,6 +259,8 @@ export function translateByAxis(reference: Reference<CubieAxes>): {
         Object.entries(real).map(([key, value]) => [value, key])
       ) as Record<CubieAxes, CubieAxes>)
     : undefined;
+
+  if (!real || !virtual) throw new Error('tradução impossível');
 
   return { real, virtual };
 }

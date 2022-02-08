@@ -264,10 +264,10 @@ export function resolveWhiteVertices(cube: Cube, movements: Movement[]) {
   let count = 0;
   while (true) {
     const resolves = [
-      resolveDownSliceFrontWhiteFace,
-      resolveDownSliceDownWhiteFace,
       resolveUpSliceUpWhiteFace,
       resolveUpSlideFrontWhiteFace,
+      resolveDownSliceFrontWhiteFace,
+      resolveDownSliceDownWhiteFace,
     ].map((callback) => callback(cube, movements));
 
     count++;
