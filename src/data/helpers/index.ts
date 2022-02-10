@@ -8,4 +8,4 @@ export { hasColor } from './has-color';
 export { initCube } from './init-cube';
 export { cubieIs } from './cubie-is';
 export { mapCube } from './map-cube';
-export { translateByAxis, translateByColor } from './translate';
+export { translateByAxis } from './translate';

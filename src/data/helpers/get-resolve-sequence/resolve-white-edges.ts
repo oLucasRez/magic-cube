@@ -1,7 +1,7 @@
 // -------------------------------------------------------------------< helpers
 import { cubieIs, hasColor, mapCube, rotate, translateByAxis } from '..';
 // ---------------------------------------------------------------------< utils
-import { cubieEntries, getCubie, getFace } from './utils';
+import { cubieEntries, getCubie, getFace, loop } from './utils';
 // ---------------------------------------------------------------------< types
 import { Cube, Movement } from '../../../domain/models';
 // ============================================================================
@@ -16,22 +16,22 @@ function resolveUpSliceUpWhiteFace(cube: Cube, movements: Movement[]) {
       const front = getFace(cubie, (color) => color !== 'white');
       if (!front) return console.error('face não encontrada.');
 
-      const { real } = translateByAxis({ up: 'up', front });
-      if (!real) return console.error('tradução impossível.');
+      const t = translateByAxis({ up: 'up', front });
 
-      while (true) {
-        const mdf = getCubie(cube, ['middle', 'down', real.front]);
-        if (!mdf) return console.error('cubie não encontrado.');
+      loop((stop) => {
+        const mdf = getCubie(cube, ['middle', 'down', t.front]);
 
-        if (mdf.down !== 'white') break;
+        if (mdf.down !== 'white') return stop;
 
-        movements.push(rotate(cube, 'D'));
-      }
+        movements.push(...rotate(cube, t).do('D'));
+      });
 
       const notWhiteFace = getFace(cubie, (color) => color !== 'white');
       if (!notWhiteFace) return console.error('face não encontrada.');
 
-      movements.push(rotate(cube, { axis: notWhiteFace, orientation: 2 }));
+      movements.push(
+        ...rotate(cube).do({ axis: notWhiteFace, orientation: 2 })
+      );
 
       resolved = false;
     }
@@ -51,42 +51,31 @@ function resolveUpSliceFrontWhiteFace(cube: Cube, movements: Movement[]) {
       const front = getFace(cubie, (color) => color === 'white');
       if (!front) return console.error('face não encontrada.');
 
-      const { real } = translateByAxis({ up: 'up', front });
-      if (!real) return console.error('tradução impossível.');
+      const t = translateByAxis({ up: 'up', front });
 
-      while (true) {
-        const rdm = getCubie(cube, [real.right, 'down', 'middle']);
+      loop((stop) => {
+        const rdm = getCubie(cube, [t.right, 'down', 'middle']);
         const rdmHasntWhite = rdm && rdm.down !== 'white';
 
         if (rdmHasntWhite) {
-          movements.push(rotate(cube, { axis: real.front, orientation: 'cw' }));
-          movements.push(
-            rotate(cube, { axis: real.right, orientation: 'acw' })
-          );
-          movements.push(
-            rotate(cube, { axis: real.front, orientation: 'acw' })
-          );
+          movements.push(...rotate(cube, t).do('F', 'R`', 'F`'));
 
           resolved = false;
-          break;
+          return stop;
         }
 
-        const ldm = getCubie(cube, [real.left, 'down', 'middle']);
+        const ldm = getCubie(cube, [t.left, 'down', 'middle']);
         const ldmHasntWhite = ldm && ldm.down !== 'white';
 
         if (ldmHasntWhite) {
-          movements.push(
-            rotate(cube, { axis: real.front, orientation: 'acw' })
-          );
-          movements.push(rotate(cube, { axis: real.left, orientation: 'cw' }));
-          movements.push(rotate(cube, { axis: real.front, orientation: 'cw' }));
+          movements.push(...rotate(cube, t).do('F`', 'L', 'F'));
 
           resolved = false;
-          break;
+          return stop;
         }
 
-        movements.push(rotate(cube, 'D'));
-      }
+        movements.push(...rotate(cube, t).do('D'));
+      });
     }
   });
 
@@ -104,22 +93,21 @@ function resolveMiddleSlice(cube: Cube, movements: Movement[]) {
       const notWhiteFace = getFace(cubie, (color) => color !== 'white');
       if (!notWhiteFace) return console.error('face não encontrada.');
 
-      const { real } = translateByAxis({ up: 'up', front: notWhiteFace });
-      if (!real) return console.error('tradução impossível.');
+      const t = translateByAxis({ up: 'up', front: notWhiteFace });
 
-      while (true) {
-        const mdf = getCubie(cube, ['middle', 'down', real.front]);
+      loop((stop) => {
+        const mdf = getCubie(cube, ['middle', 'down', t.front]);
         const mdfDownIsWhite = mdf && mdf.down === 'white';
 
-        if (mdfDownIsWhite) movements.push(rotate(cube, 'D'));
-        else break;
-      }
+        if (mdfDownIsWhite) movements.push(...rotate(cube, t).do('D'));
+        else return stop;
+      });
 
       const whiteFace = getFace(cubie, (color) => color === 'white');
       if (!whiteFace) return console.error('face não encontrada.');
 
-      const orientation = whiteFace === real.left ? 'acw' : 'cw';
-      movements.push(rotate(cube, { axis: real.front, orientation }));
+      const movement = whiteFace === t.left ? 'F`' : 'F';
+      movements.push(...rotate(cube, t).do(movement));
 
       resolved = false;
     }
@@ -139,12 +127,9 @@ function resolveDownSlice(cube: Cube, movements: Movement[]) {
       const front = getFace(cubie, (color) => color === 'white');
       if (!front) return console.error('face não encontrada.');
 
-      const { real } = translateByAxis({ up: 'up', front });
-      if (!real) return console.error('tradução impossível.');
+      const t = translateByAxis({ up: 'up', front });
 
-      movements.push(rotate(cube, { axis: real.front, orientation: 'acw' }));
-      movements.push(rotate(cube, 'D'));
-      movements.push(rotate(cube, { axis: real.right, orientation: 'acw' }));
+      movements.push(...rotate(cube, t).do('F`', 'D', 'R`'));
 
       resolved = false;
     }
@@ -161,31 +146,27 @@ function flipAllEdgeCubiesToUp(cube: Cube, movements: Movement[]) {
       const [front, color] = cubieEntries(cubie, ([, color]) => color)[0];
       if (!color) return console.error('cor não encontrada.');
 
-      const { real } = translateByAxis({ up: 'up', front });
-      if (!real) return console.error('tradução impossível.');
+      const t = translateByAxis({ up: 'up', front });
 
-      while (true) {
-        const mdf = getCubie(cube, ['middle', 'down', real.front]);
-        if (!mdf) return console.error('cubie não encontrado.');
+      loop((stop) => {
+        const mdf = getCubie(cube, ['middle', 'down', t.front]);
 
         const hasWhite = hasColor(mdf, 'white');
         const sameColor = !!cubieEntries(mdf, ([, _color]) => _color === color)
           .length;
 
-        if (hasWhite && sameColor) break;
+        if (hasWhite && sameColor) return stop;
 
-        movements.push(rotate(cube, 'D'));
-      }
+        movements.push(...rotate(cube, t).do('D'));
+      });
 
-      movements.push(rotate(cube, { axis: front, orientation: 2 }));
+      movements.push(...rotate(cube).do({ axis: front, orientation: 2 }));
     }
   });
 }
 
 export function resolveWhiteEdges(cube: Cube, movements: Movement[]) {
-  let count = 0;
-
-  while (true) {
+  loop((stop) => {
     const resolves = [
       resolveUpSliceUpWhiteFace,
       resolveUpSliceFrontWhiteFace,
@@ -193,18 +174,12 @@ export function resolveWhiteEdges(cube: Cube, movements: Movement[]) {
       resolveDownSlice,
     ].map((callback) => callback(cube, movements));
 
-    count++;
-    if (count > 15) {
-      console.error('infinity loop');
-      break;
-    }
-
-    if (resolves.some((resolved) => !resolved)) continue;
+    if (resolves.some((resolved) => !resolved)) return;
 
     flipAllEdgeCubiesToUp(cube, movements);
 
-    break;
-  }
+    return stop;
+  });
 
   return movements;
 }

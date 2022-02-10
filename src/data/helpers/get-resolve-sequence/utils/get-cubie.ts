@@ -39,4 +39,6 @@ export function getCubie(cube: Cube, coord: [CubeAxes, CubeAxes, CubeAxes]) {
   try {
     return cube[x as XCubeAxes][y as YCubeAxes][z as ZCubeAxes];
   } catch (e) {}
+
+  throw new Error(`cubie[${x},${y},${z}] não encontrado`);
 }

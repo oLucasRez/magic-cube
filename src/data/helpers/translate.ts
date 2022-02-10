@@ -158,19 +158,6 @@ type Reference<ValueType> =
   | { right: ValueType; front: ValueType }
   | { right: ValueType; back: ValueType };
 
-function oppositeColor(color: Colors) {
-  const map: Record<Colors, Colors> = {
-    blue: 'green',
-    green: 'blue',
-    orange: 'red',
-    red: 'orange',
-    white: 'yellow',
-    yellow: 'white',
-  };
-
-  return map[color];
-}
-
 function oppositeAxis(color: CubieAxes) {
   const map: Record<CubieAxes, CubieAxes> = {
     left: 'right',
@@ -197,21 +184,6 @@ function parseAxis(color: Colors) {
   return map[color];
 }
 
-function getColorPossibilities() {
-  const colorPossibilities: Record<CubieAxes, Colors>[] = possibilities.map(
-    (possibility) => ({
-      up: possibility.up,
-      right: possibility.right,
-      front: possibility.front,
-      down: oppositeColor(possibility.up),
-      left: oppositeColor(possibility.right),
-      back: oppositeColor(possibility.front),
-    })
-  );
-
-  return colorPossibilities;
-}
-
 function getAxisPossibilities() {
   const axisPossibilities: Record<CubieAxes, CubieAxes>[] = possibilities.map(
     (possibility) => ({
@@ -227,23 +199,9 @@ function getAxisPossibilities() {
   return axisPossibilities;
 }
 
-export function translateByColor(reference: Reference<Colors>) {
-  const ref: Record<CubieAxes, Colors | null> = { ...empty, ...reference };
-
-  const match = getColorPossibilities().find((possibility) => {
-    return !iterateObject(
-      possibility,
-      ([from, to]) => !(ref[from] && ref[from] !== to)
-    ).some((match) => !match);
-  });
-
-  return match;
-}
-
-export function translateByAxis(reference: Reference<CubieAxes>): {
-  real: Record<CubieAxes, CubieAxes>;
-  virtual: Record<CubieAxes, CubieAxes>;
-} {
+export function translateByAxis(
+  reference: Reference<CubieAxes>
+): Record<CubieAxes, CubieAxes> {
   const ref: Record<CubieAxes, CubieAxes | null> = { ...empty, ...reference };
 
   const match = getAxisPossibilities().find((possibility) => {
@@ -253,14 +211,7 @@ export function translateByAxis(reference: Reference<CubieAxes>): {
     ).some((match) => !match);
   });
 
-  const real = match;
-  const virtual: Record<CubieAxes, CubieAxes> | undefined = real
-    ? (Object.fromEntries(
-        Object.entries(real).map(([key, value]) => [value, key])
-      ) as Record<CubieAxes, CubieAxes>)
-    : undefined;
+  if (!match) throw new Error('tradução impossível');
 
-  if (!real || !virtual) throw new Error('tradução impossível');
-
-  return { real, virtual };
+  return match;
 }

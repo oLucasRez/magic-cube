@@ -1,7 +1,7 @@
 // -------------------------------------------------------------------< helpers
 import { cubieIs, mapCube, rotate, translateByAxis } from '..';
 // ---------------------------------------------------------------------< utils
-import { cubieEntries, getCubie, getFace } from './utils';
+import { cubieEntries, getCubie, getFace, loop } from './utils';
 // ---------------------------------------------------------------------< types
 import {
   Cube,
@@ -33,30 +33,25 @@ function resolveUpEdges(cube: Cube, movements: Movement[]) {
         ([axis, color]) => color && axis !== 'down'
       )[0][0];
 
-      const { real } = translateByAxis({ up: 'down', front });
-      if (!real) return console.error('tradução impossível.');
+      const t = translateByAxis({ up: 'down', front });
 
-      const mmfColor = getCubie(cube, ['middle', 'middle', real.front])?.[
-        real.front
-      ];
+      const mmfColor = getCubie(cube, ['middle', 'middle', t.front])[t.front];
       if (!mmfColor) return console.error('cor não encontrada.');
 
       const correctPlace = cubie[front] === mmfColor;
 
       if (correctPlace) {
-        const rmmColor = getCubie(cube, [real.right, 'middle', 'middle'])?.[
-          real.right
-        ];
+        const rmmColor = getCubie(cube, [t.right, 'middle', 'middle'])[t.right];
         if (!rmmColor) return console.error('cor não encontrada.');
 
-        if (rmmColor === cubie[real.up]) {
+        if (rmmColor === cubie[t.up]) {
           cw = 'cw';
           acw = 'acw';
-          mirror = real.right;
+          mirror = t.right;
         } else {
           cw = 'acw';
           acw = 'cw';
-          mirror = real.left;
+          mirror = t.left;
         }
 
         currentCubie = cubie;
@@ -67,7 +62,7 @@ function resolveUpEdges(cube: Cube, movements: Movement[]) {
   if (done) return didNothing;
 
   if (!currentCubie) {
-    movements.push(rotate(cube, 'D'));
+    movements.push(...rotate(cube).do('D'));
 
     didNothing = false;
 
@@ -79,17 +74,20 @@ function resolveUpEdges(cube: Cube, movements: Movement[]) {
     ([axis, color]) => color && axis !== 'down'
   )[0];
 
-  const { real } = translateByAxis({ up: 'down', front });
-  if (!real) return console.error('tradução impossível.');
+  const t = translateByAxis({ up: 'down', front });
 
-  movements.push(rotate(cube, { axis: real.up, orientation: cw }));
-  movements.push(rotate(cube, { axis: mirror, orientation: cw }));
-  movements.push(rotate(cube, { axis: real.up, orientation: cw }));
-  movements.push(rotate(cube, { axis: mirror, orientation: acw }));
-  movements.push(rotate(cube, { axis: real.up, orientation: acw }));
-  movements.push(rotate(cube, { axis: real.front, orientation: acw }));
-  movements.push(rotate(cube, { axis: real.up, orientation: acw }));
-  movements.push(rotate(cube, { axis: real.front, orientation: cw }));
+  movements.push(
+    ...rotate(cube).do(
+      { axis: t.up, orientation: cw },
+      { axis: mirror, orientation: cw },
+      { axis: t.up, orientation: cw },
+      { axis: mirror, orientation: acw },
+      { axis: t.up, orientation: acw },
+      { axis: t.front, orientation: acw },
+      { axis: t.up, orientation: acw },
+      { axis: t.front, orientation: cw }
+    )
+  );
 
   didNothing = false;
 
@@ -113,10 +111,7 @@ function resolveMiddleEdgesWrongPlace(cube: Cube, movements: Movement[]) {
   let cw: Orientation = 'cw';
   let acw: Orientation = 'acw';
   let mirror: CubieAxes = 'up';
-  let traslation: Record<CubieAxes, CubieAxes> = {} as Record<
-    CubieAxes,
-    CubieAxes
-  >;
+  let t: Record<CubieAxes, CubieAxes> = {} as Record<CubieAxes, CubieAxes>;
 
   mapCube(cube, 'middle y', (cubie) => {
     const isEdge = cubieIs('edge', cubie);
@@ -127,10 +122,6 @@ function resolveMiddleEdgesWrongPlace(cube: Cube, movements: Movement[]) {
 
       const faceColors = entries.map(([axis]) => {
         const face = getCubie(cube, [axis, 'middle', 'middle']);
-        if (!face) {
-          console.error('cubie não encontrado.');
-          return null;
-        }
 
         const [, color] = cubieEntries(face, ([, color]) => color)[0];
         if (!color) {
@@ -146,19 +137,16 @@ function resolveMiddleEdgesWrongPlace(cube: Cube, movements: Movement[]) {
 
         const [front] = entries.map(([axis]) => axis);
 
-        const { real } = translateByAxis({ up: 'down', front });
-        if (!real) return console.error('tradução impossível.');
+        t = translateByAxis({ up: 'down', front });
 
-        traslation = real;
-
-        if (cubie[real.right]) {
+        if (cubie[t.right]) {
           cw = 'cw';
           acw = 'acw';
-          mirror = real.right;
+          mirror = t.right;
         } else {
           cw = 'acw';
           acw = 'cw';
-          mirror = real.left;
+          mirror = t.left;
         }
       }
     }
@@ -166,13 +154,17 @@ function resolveMiddleEdgesWrongPlace(cube: Cube, movements: Movement[]) {
 
   if (!currentCubie) return didNothing;
 
-  movements.push(rotate(cube, { axis: mirror, orientation: cw }));
-  movements.push(rotate(cube, { axis: traslation.up, orientation: cw }));
-  movements.push(rotate(cube, { axis: mirror, orientation: acw }));
-  movements.push(rotate(cube, { axis: traslation.up, orientation: acw }));
-  movements.push(rotate(cube, { axis: traslation.front, orientation: acw }));
-  movements.push(rotate(cube, { axis: traslation.up, orientation: acw }));
-  movements.push(rotate(cube, { axis: traslation.front, orientation: cw }));
+  movements.push(
+    ...rotate(cube).do(
+      { axis: mirror, orientation: cw },
+      { axis: t.up, orientation: cw },
+      { axis: mirror, orientation: acw },
+      { axis: t.up, orientation: acw },
+      { axis: t.front, orientation: acw },
+      { axis: t.up, orientation: acw },
+      { axis: t.front, orientation: cw }
+    )
+  );
 
   didNothing = false;
 
@@ -184,7 +176,7 @@ function resolveMiddleEdgesCorrectPlace(cube: Cube, movements: Movement[]) {
 
   let currentCubie: Cubie | null = null;
   let orientation: 1 | -1 = 1;
-  let real: Record<CubieAxes, CubieAxes> = {} as Record<CubieAxes, CubieAxes>;
+  let t: Record<CubieAxes, CubieAxes> = {} as Record<CubieAxes, CubieAxes>;
 
   mapCube(cube, 'middle y', (cubie) => {
     const isEdge = cubieIs('edge', cubie);
@@ -196,16 +188,13 @@ function resolveMiddleEdgesCorrectPlace(cube: Cube, movements: Movement[]) {
 
       const rmm = getCubie(cube, [right, 'middle', 'middle']);
       const mmf = getCubie(cube, ['middle', 'middle', front]);
-      if (!rmm || !mmf) return console.error('cubie não encontrado.');
 
       if (rmm[right] === cubie[front] && mmf[front] === cubie[right]) {
-        const translation = translateByAxis({ up: 'down', front });
-        if (!translation.real) return console.error('tradução impossível.');
+        t = translateByAxis({ up: 'down', front });
 
         currentCubie = cubie;
-        real = translation.real;
 
-        if (cubie[translation.real.right]) orientation = 1;
+        if (cubie[t.right]) orientation = 1;
         else orientation = -1;
       }
     }
@@ -215,19 +204,23 @@ function resolveMiddleEdgesCorrectPlace(cube: Cube, movements: Movement[]) {
 
   const cw: Orientation = orientation === 1 ? 'cw' : 'acw';
   const acw: Orientation = orientation === 1 ? 'acw' : 'cw';
-  const axis: CubieAxes = orientation === 1 ? real.right : real.left;
+  const axis: CubieAxes = orientation === 1 ? t.right : t.left;
 
-  movements.push(rotate(cube, { axis, orientation: cw }));
-  movements.push(rotate(cube, { axis: real.up, orientation: cw }));
-  movements.push(rotate(cube, { axis, orientation: acw }));
-  movements.push(rotate(cube, { axis: real.up, orientation: 2 }));
-  movements.push(rotate(cube, { axis, orientation: cw }));
-  movements.push(rotate(cube, { axis: real.up, orientation: 2 }));
-  movements.push(rotate(cube, { axis, orientation: acw }));
-  movements.push(rotate(cube, { axis: real.up, orientation: cw }));
-  movements.push(rotate(cube, { axis: real.front, orientation: acw }));
-  movements.push(rotate(cube, { axis: real.up, orientation: acw }));
-  movements.push(rotate(cube, { axis: real.front, orientation: cw }));
+  movements.push(
+    ...rotate(cube).do(
+      { axis, orientation: cw },
+      { axis: t.up, orientation: cw },
+      { axis, orientation: acw },
+      { axis: t.up, orientation: 2 },
+      { axis, orientation: cw },
+      { axis: t.up, orientation: 2 },
+      { axis, orientation: acw },
+      { axis: t.up, orientation: cw },
+      { axis: t.front, orientation: acw },
+      { axis: t.up, orientation: acw },
+      { axis: t.front, orientation: cw }
+    )
+  );
 
   didNothing = false;
 
@@ -235,24 +228,17 @@ function resolveMiddleEdgesCorrectPlace(cube: Cube, movements: Movement[]) {
 }
 
 export function resolveMiddleEdges(cube: Cube, movements: Movement[]) {
-  let count = 0;
-  while (true) {
+  loop((stop) => {
     const resolves = [
       resolveUpEdges,
       resolveMiddleEdgesWrongPlace,
       resolveMiddleEdgesCorrectPlace,
     ].map((callback) => callback(cube, movements));
 
-    count++;
-    if (count > 100) {
-      console.error('infinity loop');
-      break;
-    }
+    if (resolves.some((resolved) => !resolved)) return;
 
-    if (resolves.some((resolved) => !resolved)) continue;
-
-    break;
-  }
+    return stop;
+  });
 
   return movements;
 }

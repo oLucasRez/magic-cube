@@ -1,7 +1,7 @@
 // -------------------------------------------------------------------< helpers
 import { cubieIs, mapCube, rotate, translateByAxis } from '..';
 // ---------------------------------------------------------------------< utils
-import { cubieEntries, getCubie, getFace } from './utils';
+import { cubieEntries, getCubie, getFace, loop } from './utils';
 // ---------------------------------------------------------------------< types
 import { Cube, CubieAxes, Movement } from '../../../domain/models';
 // ============================================================================
@@ -24,48 +24,27 @@ function resolveShallowYellowEdges(cube: Cube, movements: Movement[]) {
     }
   });
 
-  let real: Record<CubieAxes, CubieAxes> | undefined;
+  let t: Record<CubieAxes, CubieAxes> | undefined;
 
-  if (yellows.length === 0)
-    real = translateByAxis({ up: 'down', front: 'front' }).real;
+  if (yellows.length === 0) t = translateByAxis({ up: 'down', front: 'front' });
   else if (yellows.length === 2) {
     const hasLShape =
       ['front', 'back'].filter((axis) => yellows.includes(axis as CubieAxes))
         .length === 1;
 
     if (hasLShape) {
-      const _ = translateByAxis({ up: 'down', back: yellows[0] });
+      const _t = translateByAxis({ up: 'down', back: yellows[0] });
 
-      if (!_.real) {
-        console.error('tradução impossível.');
+      const lum = getCubie(cube, [_t.left, _t.up, 'middle']);
 
-        return didNothing;
-      }
-
-      const lum = getCubie(cube, [_.real.left, _.real.up, 'middle']);
-      if (!lum) {
-        console.error('cubie não encontrado.');
-
-        return didNothing;
-      }
-
-      if (lum[yellows[1]]) real = _.real;
-      else real = translateByAxis({ up: 'down', left: yellows[0] }).real;
-    } else real = translateByAxis({ up: 'down', left: yellows[0] }).real;
+      if (lum[yellows[1]]) t = _t;
+      else t = translateByAxis({ up: 'down', left: yellows[0] });
+    } else t = translateByAxis({ up: 'down', left: yellows[0] });
   } else return didNothing;
 
-  if (!real) {
-    console.error('tradução impossível.');
+  if (!t) return didNothing;
 
-    return didNothing;
-  }
-
-  movements.push(rotate(cube, 'F', real));
-  movements.push(rotate(cube, 'R', real));
-  movements.push(rotate(cube, 'U', real));
-  movements.push(rotate(cube, 'R`', real));
-  movements.push(rotate(cube, 'U`', real));
-  movements.push(rotate(cube, 'F`', real));
+  movements.push(...rotate(cube, t).do('F', 'R', 'U', 'R`', 'U`', 'F`'));
 
   didNothing = false;
 
@@ -75,25 +54,20 @@ function resolveShallowYellowEdges(cube: Cube, movements: Movement[]) {
 function resolveShallowYellowVertices(cube: Cube, movements: Movement[]) {
   let didNothing = true;
 
-  const { real } = translateByAxis({ up: 'down', front: 'front' });
-  if (!real) {
-    console.error('tradução impossível.');
-
-    return didNothing;
-  }
+  const t = translateByAxis({ up: 'down', front: 'front' });
 
   let notYet = false;
-  mapCube(cube, real.up, (cubie) => {
+  mapCube(cube, t.up, (cubie) => {
     const isEdge = cubieIs('edge', cubie);
-    const hasntDownYellow = cubie[real.up] !== 'yellow';
+    const hasntDownYellow = cubie[t.up] !== 'yellow';
 
     if (isEdge && hasntDownYellow) notYet = true;
   });
   if (notYet) return didNothing;
 
   let ready = true;
-  mapCube(cube, real.up, (cubie) => {
-    const hasntDownYellow = cubie[real.up] !== 'yellow';
+  mapCube(cube, t.up, (cubie) => {
+    const hasntDownYellow = cubie[t.up] !== 'yellow';
 
     if (hasntDownYellow) ready = false;
   });
@@ -108,69 +82,64 @@ function resolveShallowYellowVertices(cube: Cube, movements: Movement[]) {
   const notUp = null;
 
   configs.push([
-    [real.up, real.up, real.up],
-    [real.up, real.up, real.up],
-    [real.front, real.up, real.front],
+    [t.up, t.up, t.up],
+    [t.up, t.up, t.up],
+    [t.front, t.up, t.front],
   ]);
   configs.push([
-    [real.back, real.up, real.up],
-    [real.up, real.up, real.up],
-    [real.front, real.up, real.up],
+    [t.back, t.up, t.up],
+    [t.up, t.up, t.up],
+    [t.front, t.up, t.up],
   ]);
   configs.push([
-    [notUp, real.up, notUp],
-    [real.up, real.up, real.up],
-    [real.up, real.up, notUp],
+    [notUp, t.up, notUp],
+    [t.up, t.up, t.up],
+    [t.up, t.up, notUp],
   ]);
   configs.push([
-    [real.left, real.up, real.back],
-    [real.up, real.up, real.up],
-    [real.left, real.up, real.front],
+    [t.left, t.up, t.back],
+    [t.up, t.up, t.up],
+    [t.left, t.up, t.front],
   ]);
   configs.push([
-    [real.left, real.up, real.right],
-    [real.up, real.up, real.up],
-    [real.left, real.up, real.right],
+    [t.left, t.up, t.right],
+    [t.up, t.up, t.up],
+    [t.left, t.up, t.right],
   ]);
   configs.push([
-    [notUp, real.up, real.up],
-    [real.up, real.up, real.up],
-    [real.up, real.up, notUp],
+    [notUp, t.up, t.up],
+    [t.up, t.up, t.up],
+    [t.up, t.up, notUp],
   ]);
   configs.push([
-    [real.up, real.up, notUp],
-    [real.up, real.up, real.up],
-    [notUp, real.up, real.up],
+    [t.up, t.up, notUp],
+    [t.up, t.up, t.up],
+    [notUp, t.up, t.up],
   ]);
 
-  mapCube(cube, real.up, (cubie, [i, , k]) => {
-    const z = i === real.left ? 0 : i === 'middle' ? 1 : 2;
-    const x = k === real.back ? 0 : k === 'middle' ? 1 : 2;
+  mapCube(cube, t.up, (cubie, [i, , k]) => {
+    const z = i === t.left ? 0 : i === 'middle' ? 1 : 2;
+    const x = k === t.back ? 0 : k === 'middle' ? 1 : 2;
 
     const yellowFace = getFace(cubie, (color) => color === 'yellow');
 
     configs = configs.filter(
       (config) =>
-        (config[x][z] === notUp && real.up !== yellowFace) ||
+        (config[x][z] === notUp && t.up !== yellowFace) ||
         config[x][z] === yellowFace
     );
   });
 
   const needRotate = !configs.length;
   if (needRotate) {
-    movements.push(rotate(cube, 'U', real));
+    movements.push(...rotate(cube, t).do('U'));
 
     didNothing = false;
 
     return didNothing;
   }
-  movements.push(rotate(cube, 'R', real));
-  movements.push(rotate(cube, 'U', real));
-  movements.push(rotate(cube, 'R`', real));
-  movements.push(rotate(cube, 'U', real));
-  movements.push(rotate(cube, 'R', real));
-  movements.push(rotate(cube, 'U2', real));
-  movements.push(rotate(cube, 'R`', real));
+
+  movements.push(...rotate(cube, t).do('R', 'U', 'R`', 'U', 'R', 'U2', 'R`'));
 
   didNothing = false;
 
@@ -178,23 +147,16 @@ function resolveShallowYellowVertices(cube: Cube, movements: Movement[]) {
 }
 
 export function resolveYellowFace(cube: Cube, movements: Movement[]) {
-  let count = 0;
-  while (true) {
+  loop((stop) => {
     const resolves = [
       resolveShallowYellowEdges,
       resolveShallowYellowVertices,
     ].map((callback) => callback(cube, movements));
 
-    count++;
-    if (count > 100) {
-      console.error('infinity loop');
-      break;
-    }
+    if (resolves.some((resolved) => !resolved)) return;
 
-    if (resolves.some((resolved) => !resolved)) continue;
-
-    break;
-  }
+    return stop;
+  });
 
   return movements;
 }

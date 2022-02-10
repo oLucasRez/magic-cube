@@ -26,7 +26,7 @@ export function CubeContextProvider(props: CubeContextProviderProps) {
     setCurrent((previous) => {
       const cube = deepCopy(previous);
 
-      if (movement) rotateCube(cube, movement);
+      if (movement) rotateCube(cube).do(movement);
 
       return cube;
     });

@@ -1,23 +1,17 @@
 // -------------------------------------------------------------------< helpers
 import { cubieIs, mapCube, rotate, translateByAxis } from '..';
 // ---------------------------------------------------------------------< utils
-import { cubieEntries, getCubie, getFace } from './utils';
+import { cubieEntries, loop } from './utils';
 // ---------------------------------------------------------------------< types
-import {
-  Colors,
-  Cube,
-  CubieAxes,
-  Movement,
-  Orientation,
-} from '../../../domain/models';
+import { Cube, CubieAxes, Movement, Orientation } from '../../../domain/models';
 // ============================================================================
 function resolveVertices(cube: Cube, movements: Movement[]) {
   let didNothing = true;
 
-  const { real } = translateByAxis({ up: 'down', front: 'front' });
+  const t = translateByAxis({ up: 'down', front: 'front' });
 
   const colorsMap: any = {};
-  mapCube(cube, real.up, (cubie, [i, , k]) => {
+  mapCube(cube, t.up, (cubie, [i, , k]) => {
     const isVertex =
       cubieIs('vertex', cubie) && i !== 'middle' && k !== 'middle';
 
@@ -34,7 +28,7 @@ function resolveVertices(cube: Cube, movements: Movement[]) {
     .map(([axis]) => axis);
 
   if (pairs.length === 1 && pairs[0] !== 'back') {
-    movements.push(rotate(cube, 'U', real));
+    movements.push(...rotate(cube, t).do('U'));
 
     didNothing = false;
 
@@ -42,23 +36,14 @@ function resolveVertices(cube: Cube, movements: Movement[]) {
   }
 
   if (pairs.length <= 1) {
-    movements.push(rotate(cube, 'R`', real));
-    movements.push(rotate(cube, 'F', real));
-    movements.push(rotate(cube, 'R`', real));
-    movements.push(rotate(cube, 'B2', real));
-    movements.push(rotate(cube, 'R', real));
-    movements.push(rotate(cube, 'F`', real));
-    movements.push(rotate(cube, 'R`', real));
-    movements.push(rotate(cube, 'B2', real));
-    movements.push(rotate(cube, 'R2', real));
+    movements.push(
+      ...rotate(cube, t).do('R`', 'F', 'R`', 'B2', 'R', 'F`', 'R`', 'B2', 'R2')
+    );
 
     didNothing = false;
 
     return didNothing;
   }
-
-  // quando n tem nenhum par ou quando so tem 1 par atras
-  // R' F R' B2 R F' R' B2 R2
 
   return didNothing;
 }
@@ -66,10 +51,10 @@ function resolveVertices(cube: Cube, movements: Movement[]) {
 function resolveEdges(cube: Cube, movements: Movement[]) {
   let didNothing = true;
 
-  const { real } = translateByAxis({ up: 'down', front: 'front' });
+  const t = translateByAxis({ up: 'down', front: 'front' });
 
   let metadata: any = {};
-  mapCube(cube, real.up, (cubie, [i, , k]) => {
+  mapCube(cube, t.up, (cubie, [i, , k]) => {
     const isEdge = cubieIs('edge', cubie);
     const isVertex =
       cubieIs('vertex', cubie) && i !== 'middle' && k !== 'middle';
@@ -77,7 +62,7 @@ function resolveEdges(cube: Cube, movements: Movement[]) {
     if (isEdge) {
       const [face] = cubieEntries(
         cubie,
-        ([axis, color]) => color && axis !== real.up
+        ([axis, color]) => color && axis !== t.up
       )[0];
 
       if (!metadata[face]) metadata[face] = {};
@@ -99,7 +84,7 @@ function resolveEdges(cube: Cube, movements: Movement[]) {
 
   if (wrongs === 0) {
     if (cube.middle.middle.front.front !== cube.middle.down.front.front) {
-      movements.push(rotate(cube, 'D'));
+      movements.push(...rotate(cube, t).do('U'));
 
       didNothing = false;
     }
@@ -121,34 +106,38 @@ function resolveEdges(cube: Cube, movements: Movement[]) {
       .filter(([, value]: any) => value.edge === value.vertex)
       .map(([face]) => face);
 
-    if (correct !== real.back) {
-      movements.push(rotate(cube, 'U', real));
+    if (correct !== t.back) {
+      movements.push(...rotate(cube, t).do('U'));
 
       didNothing = false;
       return didNothing;
     }
 
     const leftIsOpposite =
-      metadata[real.left].vertex === oppositeColor[metadata[real.left].edge];
+      metadata[t.left].vertex === oppositeColor[metadata[t.left].edge];
 
     mirror = leftIsOpposite ? -1 : 1;
   }
 
-  const axis: CubieAxes = mirror === 1 ? real.left : real.right;
+  const axis: CubieAxes = mirror === 1 ? t.left : t.right;
   const cw: Orientation = mirror === 1 ? 'cw' : 'acw';
   const acw: Orientation = mirror === 1 ? 'acw' : 'cw';
 
-  movements.push(rotate(cube, { axis, orientation: 2 }));
-  movements.push(rotate(cube, { axis: real.up, orientation: acw }));
-  movements.push(rotate(cube, { axis, orientation: acw }));
-  movements.push(rotate(cube, { axis: real.up, orientation: acw }));
-  movements.push(rotate(cube, { axis, orientation: cw }));
-  movements.push(rotate(cube, { axis: real.up, orientation: cw }));
-  movements.push(rotate(cube, { axis, orientation: cw }));
-  movements.push(rotate(cube, { axis: real.up, orientation: cw }));
-  movements.push(rotate(cube, { axis, orientation: cw }));
-  movements.push(rotate(cube, { axis: real.up, orientation: acw }));
-  movements.push(rotate(cube, { axis, orientation: cw }));
+  movements.push(
+    ...rotate(cube).do(
+      { axis, orientation: 2 },
+      { axis: t.up, orientation: acw },
+      { axis, orientation: acw },
+      { axis: t.up, orientation: acw },
+      { axis, orientation: cw },
+      { axis: t.up, orientation: cw },
+      { axis, orientation: cw },
+      { axis: t.up, orientation: cw },
+      { axis, orientation: cw },
+      { axis: t.up, orientation: acw },
+      { axis, orientation: cw }
+    )
+  );
 
   didNothing = false;
 
@@ -156,38 +145,13 @@ function resolveEdges(cube: Cube, movements: Movement[]) {
 }
 
 export function resolveYellowBorders(cube: Cube, movements: Movement[]) {
-  let count = 0;
-  while (true) {
-    const resolves = [resolveVertices].map((callback) =>
-      callback(cube, movements)
-    );
+  loop((stop) => {
+    if (resolveVertices(cube, movements)) return stop;
+  });
 
-    count++;
-    if (count > 100) {
-      console.error('infinity loop');
-      break;
-    }
-
-    if (resolves.some((resolved) => !resolved)) continue;
-
-    break;
-  }
-
-  while (true) {
-    const resolves = [resolveEdges].map((callback) =>
-      callback(cube, movements)
-    );
-
-    count++;
-    if (count > 100) {
-      console.error('infinity loop');
-      break;
-    }
-
-    if (resolves.some((resolved) => !resolved)) continue;
-
-    break;
-  }
+  loop((stop) => {
+    if (resolveEdges(cube, movements)) return stop;
+  });
 
   return movements;
 }

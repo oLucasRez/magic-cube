@@ -22,7 +22,7 @@ export function EnvironmentView(props: EnvironmentViewProps) {
       <ambientLight intensity={1} />
 
       <CubeContextProvider>
-        <MovementsContextProvider shuffleLength={21} clock_ms={500} autoStart>
+        <MovementsContextProvider shuffleLength={21} clock_ms={100} autoStart>
           {children}
         </MovementsContextProvider>
       </CubeContextProvider>
